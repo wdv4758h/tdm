@@ -123,17 +123,24 @@ pub fn taylor_cos<T>(x: T) -> T
 pub fn sin(data: f64) -> f64 {
     use std::f64::consts::{PI, FRAC_PI_2, FRAC_PI_4};
 
+    // [-∞, ∞] => (-π, π)
+    // sin(θ) = -sin(θ-π)
     let (data, neg_flag) = (data % PI, ((data / PI) as u8) % 2 != 0);
+    // (-π, π) => (0, π)
+    // sin(θ) = -sin(-θ)
     let (data, neg_flag) = (data.abs(), neg_flag ^ (data < 0.));
 
     let ret = match data {
         data if ((0. <= data) && (data < FRAC_PI_4)) => {
+            // sin(θ)
             taylor_sin(data)
         },
         data if ((FRAC_PI_4 <= data) && (data < (PI - FRAC_PI_4))) => {
+            // sin(θ) = cos(θ-π/2)
             taylor_cos(data - FRAC_PI_2)
         },
         data if (((PI - FRAC_PI_4) <= data) && (data < PI)) => {
+            // sin(θ) = sin(π-θ)
             taylor_sin(PI - data)
         },
         _ => { panic!("why are you here ?") }
@@ -152,7 +159,7 @@ pub fn sin(data: f64) -> f64 {
 ///
 /// [sin]: fn.sin.html
 pub fn sinf(data: f32) -> f32 {
-    return sin(data as f64) as f32;
+    sin(data as f64) as f32
 }
 
 
@@ -173,5 +180,5 @@ pub fn cos(data: f64) -> f64 {
 ///
 /// [cos]: fn.cos.html
 pub fn cosf(data: f32) -> f32 {
-    return cos(data as f64) as f32;
+    cos(data as f64) as f32
 }
